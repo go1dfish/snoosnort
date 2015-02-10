@@ -1,0 +1,24 @@
+{
+  "name": "snoosnort",
+  "version": "0.0.1",
+  "description": "Post and comment ingest for reddit",
+  "main": "snoosnort.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/go1dfish/snoosnort.git"
+  },
+  "keywords": [
+    "reddit",
+    "json",
+    "bot"
+  ],
+  "author": "go1dfish",
+  "license": "WTFPLv2",
+  "bugs": {
+    "url": "https://github.com/go1dfish/snoosnort/issues"
+  },
+  "homepage": "https://github.com/go1dfish/snoosnort"
+}
