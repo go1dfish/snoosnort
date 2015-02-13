@@ -19,14 +19,26 @@ module.exports = function(reddit, types, schedule) {
       emitter.emit(type, item, types[type]);
     }
     var tasks = [schedule.repeat(function() {
+      var speculative = {};
       var sorted = _.keys(knownOfType).sort();
       var existing = idRange(_.first(sorted), _.last(sorted), depth).reverse();
       var missing = existing.filter(function(id) {return !knownOfType[id];});
       var names = missing.slice(0, 100).map(function(j) {return type+'_'+j;});
       if (!names.length) {return RSVP.resolve();}
+      if (missing.length < 100) {
+        var specCount = 100-missing.length;
+        var specStart = parseInt(_.last(sorted)+'',36);
+        var specEnd = specStart + specCount - 1;
+        var spec = idRange(specStart.toString(36), specEnd.toString(36));
+        spec.forEach(function(id) {speculative[id] = true;});
+        names = _.union(names, spec.map(function(j) {return type+'_'+j;}));
+      }
       return byId(names).then(function(items) {items.forEach(ingestItem);
-        names.filter(function(j) {return !knownOfType[j.split('_').pop()];})
-          .forEach(function(name) {knownOfType[name.split('_').pop()] = 1;});
+        names.filter(function(j) {
+          var id = j.split('_').pop();
+          return !knownOfType[id] && !speculative[id];
+        })
+        .forEach(function(name) {knownOfType[name.split('_').pop()] = 1;});
       });
     })];
     if (poll) {tasks.push(poll(ingestItem));}
